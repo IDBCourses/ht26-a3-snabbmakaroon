@@ -1,10 +1,10 @@
 # My instrument
 
-**Play it here:** <!-- Paste your GitHub Pages link here, e.g. https://idbcourses.github.io/your-repo-name/ -->
+**Play it here:** (https://idbcourses.github.io/ht26-a3-snabbmakaroon/)
 
-**Name:** <!-- Your name and MAU ID -->
+**Name:** Andrea Badenhorst as7426
 
-<!-- One or two sentences: what kind of instrument is it, and what is it like to play? -->
+This instrument is inspired by a koshi wind chime. Each of the four circles in the corners changes the sounds and notes in a way that should feel reminiscent of the four elements.
 
 ## How to play
 
@@ -12,8 +12,8 @@
 
 | When you...  | The sound...                         | The shapes... |
 | ------------ | ------------------------------------ | ------------- |
-| Click or tap | Plays a C4 (the example: replace it) | Nothing yet   |
-|              |                                      |               |
+| Move your pointer over the circles in the middle, start slow, then move fast| Plays a series of notes, when moving faster the notes get louder | Each shape "lights up" as you hover over it, faster movement, the shape will turn into a square.  |
+|  Click any shape in the corner, and move across circles in the centre again |  Changes depending on the circle you clicked on  | Nothing happends to the shapes here |
 
 <!-- Anything else a player needs to know: how to get started, a good thing to try first. -->
 
