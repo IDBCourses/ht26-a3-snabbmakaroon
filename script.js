@@ -37,6 +37,7 @@ const square6 = createShape();
 const airShape = createShape();
 const earthShape = createShape();
 const waterShape = createShape();
+const fireShape = createShape();
 
 
 const water = ["A", "D", "F", "G"];
@@ -79,6 +80,10 @@ const synthWater = new Tone.PolySynth(Tone.Synth).connect(vibrato);
 const reverb2 = new Tone.Reverb({decay: 3, wet: 0.35}).toDestination();
 const synthEarth = new Tone.PolySynth(Tone.Synth).connect(reverb2)
 
+const reverb3 = new Tone.Reverb({decay: 3, wet: 0.35}).toDestination();
+const vibrato3 = new Tone.Vibrato({frequency: 5, type: "sine", depth: 0.2}).connect(reverb3)
+const fmSynth = new Tone.FMSynth().connect(vibrato3);
+
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
 function update() {
@@ -97,7 +102,7 @@ function startSound() {
   Tone.start();
 }
 
-function Chime (bend, octaveNum, ChimeStyle) {
+function Chime(bend, octaveNum, ChimeStyle) {
   bender = bend;
   octave = octaveNum;
   style = ChimeStyle;
@@ -114,6 +119,12 @@ function leaveShape(shape, hue) {
   inside = false
 }
 
+function shapeSettings(shape, x, y, size, hue) {
+  shape.setPosition(x, y);
+  shape.setSize(size);
+  shape.setColour(hue, 30, 40);
+}
+
 function playMelody () {
   let i = Math.floor(Math.random() * 4)
   if (style === "normal") {
@@ -124,6 +135,9 @@ function playMelody () {
   }
   if (style === "earth") {
     synthEarth.triggerAttackRelease(bender[i] + octave, duration);
+  }
+  if (style === "fire") {
+    fmSynth.triggerAttackRelease(bender[i] + octave, duration);
   }
 }
 
@@ -163,14 +177,12 @@ function pointerMove(event) {
 function forgerOldest() {
   speeds.shift();
   useAverage();
-  //console.log(speeds.length)
 }
 
 function useAverage() {
   let total = 0;
   for (let i = 0; i < speeds.length; i++) {
     total = total + speeds[i];
-    //console.log(speeds[i])
   }
 
   let average = 0
@@ -178,13 +190,13 @@ function useAverage() {
     average = total / speeds.length;
 
   }  if (average > maxAverage) {
-    average = maxAverage
+    average = maxAverage;
     }
-  let normAverage = average / maxAverage
+  let normAverage = average / maxAverage;
 
   let volume = -30 + average * 5;
   if (volume > 0) {
-    volume = 0
+    volume = 0;
   }
   synth.volume.value = volume;
   synthWater.volume.value = volume
@@ -198,7 +210,7 @@ function useAverage() {
   square4.setRoundedness(angle);
   square5.setRoundedness(angle);
   square6.setRoundedness(angle);
-  console.log("angle is, " + angle + " average is, " + normAverage);
+  //console.log("angle is, " + angle + " average is, " + normAverage);
 
 
    if (speeds.length === 0) {
@@ -218,40 +230,18 @@ function setup() {
   update(); // start the update loop
   use(); // start the use loop
 
-  square.setPosition(0.2, 0.09);
-  square.setRoundedness();
-  square.setSize(750);
-  square.setColour(300, 30, 40);
 
-  square2.setPosition(0.25, 0.15);
-  square2.setRoundedness();
-  square2.setSize(650);
-  square2.setColour(650, 30, 40);
+  shapeSettings(square, 0.2, 0.09, 750, 300);
+  shapeSettings(square2, 0.25, 0.15, 650, 650);
+  shapeSettings(square3, 0.3, 0.2, 550, 550);
+  shapeSettings(square4, 0.35, 0.25, 450, 150);
+  shapeSettings(square5, 0.4, 0.3, 350, 800);
+  shapeSettings(square6, 0.45, 0.35, 250, 50);
 
-  square3.setPosition(0.3, 0.2);
-  square3.setSize(550);
-  square3.setColour(550, 30, 40);
-
-  square4.setPosition(0.35, 0.25);
-  square4.setSize(450);
-  square4.setColour(150, 30, 40);
-
-  square5.setPosition(0.4, 0.3);
-  square5.setSize(350);
-  square5.setColour(800, 30, 40);
-
-  square6.setPosition(0.45, 0.35);
-  square6.setSize(250);
-  square6.setColour(50, 30, 40)
-
-  airShape.setColour(192, 70, 50);
-  airShape.setPosition(0, 0.02);
-
-  earthShape.setColour(12, 70, 50);
-  earthShape.setPosition(0, 0.9);
-
-  waterShape.setColour(162, 70, 50);
-  waterShape.setPosition(0.9, 0.9);
+  shapeSettings(airShape, 0, 0, 100, 190);
+  shapeSettings(earthShape, 0, 0.88, 100, 15);
+  shapeSettings(waterShape, 0.85, 0.88, 100, 160);
+  shapeSettings(fireShape, 0.85, 0, 100, 350);
 
 
   // Put your event listener code here
@@ -279,11 +269,9 @@ function setup() {
   //airShape.element.addEventListener("pointerdown", airChime);
 
   airShape.element.addEventListener("pointerdown", () => Chime(air, "5", "normal"));
-
   earthShape.element.addEventListener("pointerdown", () => Chime(earth, "3", "earth"));
-
   waterShape.element.addEventListener("pointerdown", () => Chime(water, "4", "water"));
-
+  fireShape.element.addEventListener("pointerdown", () => Chime(fire, "4", "fire"));
 
 }
 
