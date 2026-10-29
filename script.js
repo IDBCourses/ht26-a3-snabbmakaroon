@@ -38,12 +38,6 @@ const airShape = createShape();
 const earthShape = createShape();
 const waterShape = createShape();
 
-const chime = [
-  ["A", "D", "F", "G"],
-  ["A", "C", "E", "B"],
-  ["G", "C", "E", "F"],
-  ["G", "B", "D", "A"]
-]
 
 const water = ["A", "D", "F", "G"];
 const air = ["A", "C", "E", "B"];
@@ -78,7 +72,7 @@ let style = "normal"
 // Make the instruments and plug them into the speakers.
 const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
 
-const reverb = new Tone.Reverb({decay: 3, wet: 0.35}).toDestination();
+const reverb = new Tone.Reverb({decay: 3, wet: 0.9}).toDestination();
 const vibrato = new Tone.Vibrato({frequency: 5, type: "sine", depth: 0.2}).connect(reverb)
 const synthWater = new Tone.PolySynth(Tone.Synth).connect(vibrato);
 
@@ -99,91 +93,24 @@ function use() {
 
 // ---------- Controls (Event Handlers) ----------
 // Runs every time the pointer goes down: a click, a tap or a pen touch.
-function startSound(event) {
+function startSound() {
   Tone.start();
 }
 
-function airChime () {
-  bender = air
-  octave = 4
-  style = "normal"
+function Chime (bend, octaveNum, ChimeStyle) {
+  bender = bend;
+  octave = octaveNum;
+  style = ChimeStyle;
 }
 
-function earthChime() {
-  bender = earth
-  octave = 3
-  style = "earth"
-}
-
-function waterChime() {
-  bender = water
-  octave = 3
-  style = "water"
-}
-
-function pointerEnterSquare(event) {
-  square.setColour(300, 80, 50);
-  inside = true;
-  playMelody();
-}
-
-function pointerLeaveSquare () {
-  square.setColour(300, 30, 40);
-  inside = false;
-}
-
-function pointerEnterSquare2 (event) {
-  square2.setColour(650, 80, 50);
-  inside = true;
-  playMelody();
-}
-
-function pointerLeaveSquare2 (event) {
-  square2.setColour(650, 30, 40);
-  inside = false;
-}
-
-function pointerEnterSquare3 (event) {
-  square3.setColour(550, 80, 50);
+function enterShape(shape, hue) {
+  shape.setColour(hue, 80, 50);
   inside = true;
   playMelody()
 }
 
-function pointerLeaveSquare3 (event) {
-  square3.setColour(550, 30, 40);
-  inside = false
-}
-
-function pointerEnterSquare4 (event) {
-  square4.setColour(150, 80, 50);
-  inside = true
-  playMelody()
-}
-
-function pointerLeaveSquare4 (event) {
-  square4.setColour(150, 30, 40);
-  inside = false
-}
-
-function pointerEnterSquare5 (event) {
-  square5.setColour(800, 80, 50);
-  inside = true
-  playMelody()
-}
-
-function pointerLeaveSquare5 (event) {
-  square5.setColour(800, 30, 40);
-  inside = false
-}
-
-function pointerEnterSquare6 (event) {
-  square6.setColour(50, 80, 50);
-  inside = true
-  playMelody()
-}
-
-function pointerLeaveSquare6 (event) {
-  square6.setColour(50, 30, 40);
+function leaveShape(shape, hue) {
+  shape.setColour(hue, 30, 40);
   inside = false
 }
 
@@ -291,8 +218,6 @@ function setup() {
   update(); // start the update loop
   use(); // start the use loop
 
-  // Example: a shape near the middle of the window. Replace it with your own.
-
   square.setPosition(0.2, 0.09);
   square.setRoundedness();
   square.setSize(750);
@@ -333,29 +258,31 @@ function setup() {
   window.addEventListener("pointerdown", startSound);
   window.addEventListener("pointermove", pointerMove);
 
-  square.element.addEventListener("pointerenter", pointerEnterSquare);
-  square.element.addEventListener("pointerleave", pointerLeaveSquare);
+  square.element.addEventListener("pointerenter", () => enterShape(square, 300));
+  square.element.addEventListener("pointerleave", () => leaveShape(square, 300));
 
-  square2.element.addEventListener("pointerleave", pointerLeaveSquare2);
-  square2.element.addEventListener("pointerenter", pointerEnterSquare2);
+  square2.element.addEventListener("pointerleave", () => leaveShape(square2, 650));
+  square2.element.addEventListener("pointerenter", () => enterShape(square2, 650));
 
-  square3.element.addEventListener("pointerenter", pointerEnterSquare3);
-  square3.element.addEventListener("pointerleave", pointerLeaveSquare3);
+  square3.element.addEventListener("pointerenter", () => enterShape(square3, 550));
+  square3.element.addEventListener("pointerleave", () => leaveShape(square3, 550));
 
-  square4.element.addEventListener("pointerenter", pointerEnterSquare4);
-  square4.element.addEventListener("pointerleave", pointerLeaveSquare4);
+  square4.element.addEventListener("pointerenter", () => enterShape(square4, 150));
+  square4.element.addEventListener("pointerleave", () => leaveShape(square4, 150));
 
-  square5.element.addEventListener("pointerenter", pointerEnterSquare5);
-  square5.element.addEventListener("pointerleave", pointerLeaveSquare5);
+  square5.element.addEventListener("pointerenter", () => enterShape(square5, 800));
+  square5.element.addEventListener("pointerleave", () => leaveShape(square5, 800));
 
-  square6.element.addEventListener("pointerenter", pointerEnterSquare6);
-  square6.element.addEventListener("pointerleave", pointerLeaveSquare6);
+  square6.element.addEventListener("pointerenter", () => enterShape(square6, 50));
+  square6.element.addEventListener("pointerleave", () => leaveShape(square6, 50));
 
-  airShape.element.addEventListener("pointerdown", airChime);
+  //airShape.element.addEventListener("pointerdown", airChime);
 
-  earthShape.element.addEventListener("pointerdown", earthChime);
+  airShape.element.addEventListener("pointerdown", () => Chime(air, "5", "normal"));
 
-  waterShape.element.addEventListener("pointerdown", waterChime);
+  earthShape.element.addEventListener("pointerdown", () => Chime(earth, "3", "earth"));
+
+  waterShape.element.addEventListener("pointerdown", () => Chime(water, "4", "water"));
 
 
 }
