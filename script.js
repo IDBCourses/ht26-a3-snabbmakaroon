@@ -44,6 +44,7 @@ const water = ["A", "D", "F", "G"];
 const air = ["A", "C", "E", "B"];
 const earth = ["G", "C", "E", "F"];
 const fire = ["G", "B", "D", "A"];
+
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
 // For example: where the pointer is, how fast it's moving, or whether a drone is on.
@@ -52,22 +53,18 @@ let duration = "8n";
 let octave = 5
 
 let inside = false;
+
 let lastX = 0;
 let lastY = 0;
 let lastTime = 0;
 let speeds = [];
+
 let maxSpeed = 23;
 let minSpeed = 0;
-
 let maxAverage = 5
 
 let bender = air
-
 let style = "normal"
-
-
-
-
 
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
@@ -141,7 +138,6 @@ function playMelody () {
   }
 }
 
-
 function pointerMove(event) {
   if (!inside) {
     return;
@@ -199,8 +195,9 @@ function useAverage() {
     volume = 0;
   }
   synth.volume.value = volume;
-  synthWater.volume.value = volume
-  synthEarth.volume.value = volume
+  synthWater.volume.value = volume;
+  synthEarth.volume.value = volume;
+  fmSynth.volume.value = volume;
 
 
   let angle = 1 - normAverage;
@@ -230,7 +227,6 @@ function setup() {
   update(); // start the update loop
   use(); // start the use loop
 
-
   shapeSettings(square, 0.2, 0.09, 750, 300);
   shapeSettings(square2, 0.25, 0.15, 650, 650);
   shapeSettings(square3, 0.3, 0.2, 550, 550);
@@ -242,7 +238,6 @@ function setup() {
   shapeSettings(earthShape, 0, 0.88, 100, 15);
   shapeSettings(waterShape, 0.85, 0.88, 100, 160);
   shapeSettings(fireShape, 0.85, 0, 100, 350);
-
 
   // Put your event listener code here
   window.addEventListener("pointerdown", startSound);
