@@ -59,38 +59,83 @@ let lastY = 0;
 let lastTime = 0;
 let speeds = [];
 
-let maxSpeed = 23;
-let minSpeed = 0;
-let maxAverage = 5
+let maxAverage = 5;
 
-let bender = air
-let style = "normal"
+let bender = air;
+let style = "normal";
+
+let gap = 0;
+let timeEnter = [];
+let timeLeave =[];
+let maxGap = 1500;
 
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
 const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
 
-const reverb = new Tone.Reverb({decay: 3, wet: 0.9}).toDestination();
-const vibrato = new Tone.Vibrato({frequency: 5, type: "sine", depth: 0.2}).connect(reverb)
+const reverbWater = new Tone.Reverb({decay: 3, wet: 0.9}).toDestination();
+const vibrato = new Tone.Vibrato({frequency: 5, type: "sine", depth: 0.2}).connect(reverbWater)
 const synthWater = new Tone.PolySynth(Tone.Synth).connect(vibrato);
 
-const reverb2 = new Tone.Reverb({decay: 3, wet: 0.35}).toDestination();
-const synthEarth = new Tone.PolySynth(Tone.Synth).connect(reverb2)
+const reverbEarth = new Tone.Reverb({decay: 3, wet: 0.35}).toDestination();
+const synthEarth = new Tone.PolySynth(Tone.Synth).connect(reverbEarth)
 
-const reverb3 = new Tone.Reverb({decay: 3, wet: 0.35}).toDestination();
-const vibrato3 = new Tone.Vibrato({frequency: 5, type: "sine", depth: 0.2}).connect(reverb3)
-const fmSynth = new Tone.FMSynth().connect(vibrato3);
+const reverbFire = new Tone.Reverb({decay: 3, wet: 0.35}).toDestination();
+const vibrato3 = new Tone.Vibrato({frequency: 5, type: "sine", depth: 0.2}).connect(reverbFire)
+const synthFire = new Tone.FMSynth().connect(vibrato3);
 
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
 function update() {
-  setTimeout(update, 100); // call update() again in 100 milliseconds
+  speeds.shift();
+  use();
 }
 
 // ---------- Use ----------
 // Use the state to make sound and move shapes. This is called every 100ms.
 function use() {
-  setTimeout(use, 100); // call use() again in 100 milliseconds
+  let total = 0;
+  for (let i = 0; i < speeds.length; i++) {
+    total = total + speeds[i];
+  }
+
+  let average = 0
+  if (speeds.length > 0) {
+    average = total / speeds.length;
+
+  }  if (average > maxAverage) {
+    average = maxAverage;
+    }
+  let normAverage = average / maxAverage; //normalised average for the angle equation
+
+  let volume = -30 + average * 5;
+  if (volume > 0) {
+    volume = 0;
+  }
+  synth.volume.value = volume;
+  synthWater.volume.value = volume;
+  synthEarth.volume.value = volume;
+  synthFire.volume.value = volume;
+
+
+  let angle = 1 - normAverage; //inverted values, high average equates to low value for angle
+  square.setRoundedness(angle);
+  square2.setRoundedness(angle);
+  square3.setRoundedness(angle);
+  square4.setRoundedness(angle);
+  square5.setRoundedness(angle);
+  square6.setRoundedness(angle);
+
+   if (speeds.length === 0) { //sets shape back to circle if array empty
+      square.setRoundedness(0.5);
+      square2.setRoundedness(0.5);
+      square3.setRoundedness(0.5);
+      square4.setRoundedness(0.5);
+      square5.setRoundedness(0.5);
+      square6.setRoundedness(0.5);
+    }
+  setTimeout(use, 100);// call use() again in 100 milliseconds
+
 }
 
 // ---------- Controls (Event Handlers) ----------
@@ -122,19 +167,43 @@ function shapeSettings(shape, x, y, size, hue) {
   shape.setColour(hue, 30, 40);
 }
 
+function timeEnterCircle() {
+  timeEnter.push(Date.now());
+  if (timeEnter.length > 1) { //only want one value in each array at a time
+    timeEnter.shift();
+  }
+}
+
+function timeLeaveCircle() {
+  timeLeave.push(Date.now());
+  if (timeLeave.length > 1) {
+    timeLeave.shift();
+  }
+}
+
+
 function playMelody () {
+  gap = timeLeave[0] - timeEnter[0];
+  if (gap > maxGap) {
+    gap = maxGap;
+  }
+  let normGap = gap / maxGap; // "wet" is any number from 0-1 so had to normalise gap
+
   let i = Math.floor(Math.random() * 4)
   if (style === "normal") {
-  synth.triggerAttackRelease(bender[i] + octave, "16n")
+    synth.triggerAttackRelease(bender[i] + octave, duration)
   }
   if (style === "water") {
+    reverbWater.wet.value = normGap;
     synthWater.triggerAttackRelease(bender[i] + octave, duration);
   }
   if (style === "earth") {
+    reverbEarth.wet.value = normGap;
     synthEarth.triggerAttackRelease(bender[i] + octave, duration);
   }
   if (style === "fire") {
-    fmSynth.triggerAttackRelease(bender[i] + octave, duration);
+    reverbFire.wet.value = normGap;
+    synthFire.triggerAttackRelease(bender[i] + octave, duration);
   }
 }
 
@@ -152,11 +221,7 @@ function pointerMove(event) {
     return; //  takes into account if two things happen at once
   }
   let speed = distance / seconds;
-    if (speed > maxSpeed) {
-      speed = maxSpeed;
-    } if (speed < minSpeed) {
-      speed = minSpeed
-    }
+
   lastX = normX
   lastY = normY
   lastTime = now;
@@ -166,60 +231,10 @@ function pointerMove(event) {
   if (speeds.legnth > 10) {
     speeds.shift()
   }
-  setTimeout(forgerOldest, 500);
-  useAverage();
+  setTimeout(update, 500);
+  use();
 }
 
-function forgerOldest() {
-  speeds.shift();
-  useAverage();
-}
-
-function useAverage() {
-  let total = 0;
-  for (let i = 0; i < speeds.length; i++) {
-    total = total + speeds[i];
-  }
-
-  let average = 0
-  if (speeds.length > 0) {
-    average = total / speeds.length;
-
-  }  if (average > maxAverage) {
-    average = maxAverage;
-    }
-  let normAverage = average / maxAverage;
-
-  let volume = -30 + average * 5;
-  if (volume > 0) {
-    volume = 0;
-  }
-  synth.volume.value = volume;
-  synthWater.volume.value = volume;
-  synthEarth.volume.value = volume;
-  fmSynth.volume.value = volume;
-
-
-  let angle = 1 - normAverage;
-  square.setRoundedness(angle);
-  square2.setRoundedness(angle);
-  square3.setRoundedness(angle);
-  square4.setRoundedness(angle);
-  square5.setRoundedness(angle);
-  square6.setRoundedness(angle);
-  //console.log("angle is, " + angle + " average is, " + normAverage);
-
-
-   if (speeds.length === 0) {
-      square.setRoundedness(0.5);
-      square2.setRoundedness(0.5);
-      square3.setRoundedness(0.5);
-      square4.setRoundedness(0.5);
-      square5.setRoundedness(0.5);
-      square6.setRoundedness(0.5);
-    }
- // console.log(average, speeds.length);
-}
 
 // ---------- Setup ----------
 // Setup is run once, at the start of the program. It sets everything up for us!
@@ -264,9 +279,18 @@ function setup() {
   //airShape.element.addEventListener("pointerdown", airChime);
 
   airShape.element.addEventListener("pointerdown", () => Chime(air, "5", "normal"));
+
   earthShape.element.addEventListener("pointerdown", () => Chime(earth, "3", "earth"));
+  earthShape.element.addEventListener("pointerenter", timeEnterCircle);
+  earthShape.element.addEventListener("pointerleave", timeLeaveCircle);
+
   waterShape.element.addEventListener("pointerdown", () => Chime(water, "4", "water"));
+  waterShape.element.addEventListener("pointerenter", timeEnterCircle);
+  waterShape.element.addEventListener("pointerleave", timeLeaveCircle);
+
   fireShape.element.addEventListener("pointerdown", () => Chime(fire, "4", "fire"));
+  fireShape.element.addEventListener("pointerenter", timeEnterCircle);
+  fireShape.element.addEventListener("pointerleave", timeLeaveCircle);
 
 }
 
