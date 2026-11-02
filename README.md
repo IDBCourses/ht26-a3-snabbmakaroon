@@ -4,7 +4,7 @@
 
 **Name:** Andrea Badenhorst as7426
 
-This instrument is inspired by a koshi wind chime. Each of the four circles in the corners changes the sounds and notes in a way that should feel reminiscent of the four elements.
+This instrument is inspired by a koshi wind chime. Each of the four circles in the corners changes the sounds and notes in a way that should feel reminiscent of the four elements. Lower the screen's brightness if you are sensitive to flashing lights.
 
 ## How to play
 
@@ -12,12 +12,11 @@ This instrument is inspired by a koshi wind chime. Each of the four circles in t
 
 | When you...  | The sound...                         | The shapes... |
 | ------------ | ------------------------------------ | ------------- |
-| Move your pointer over the circles in the middle, start slow, then move fast| Plays a series of notes, when moving faster the notes get louder | Each shape "lights up" as you hover over it, faster movement, the shape will turn into a square.  |
-|  Click any shape in the corner, and move across circles in the centre again |  Changes depending on the circle you clicked on  | Nothing happends to the shapes here |
+| Move your pointer over the circles in the middle, start slow, then move fast| Plays a series of notes, when moving faster the notes get louder | Each shape "lights up" as you hover over it. Faster movement, the shape will turn into a square.  |
+| Click any shape in the corner, and move across circles in the centre again |  Changes depending on the circle you clicked on  | Nothing happends to the shapes here |
+| After clicking the shape in the corner, hover over the same shape that was clicked, for different amounts of time | The amount of time spent in the circle after it was clicked will affect how much reverb the sound will have when you move accross the centre circles. (This does not apply for the top left circle). | Nothing happens to the shapes. |
 
-<!-- Anything else a player needs to know: how to get started, a good thing to try first. -->
-
----
+For the reverb affect, you only need to press the desired corner circles once but change the reverb by hovering over as many times as you would like. Try pressing once, and then moving over the corner circle very fast, listen to the sound. Then move over the corner circle but stay for a while, and listen to the sound again.
 
 ## About this assignment
 
